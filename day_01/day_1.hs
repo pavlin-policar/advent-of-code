@@ -2,8 +2,7 @@ findNumIncreasing xs = sum $ map fromEnum $ map (\(x, y) -> x < y) pairs
     where pairs = zip xs (tail xs)
 
 
-slidingWindows xs = map (\(x, y, z) -> x + y + z) triplets
-    where triplets = zip3 xs (tail xs) ((tail . tail) xs)
+slidingWindows xs = zipWith3 (\x y z -> x + y + z) xs (tail xs) ((tail . tail) xs)
 
 {-
 main =
