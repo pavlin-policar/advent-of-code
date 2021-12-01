@@ -2,9 +2,12 @@ import System.IO
 import Control.Monad
 
 
-findNumIncreasing xs = sum $ map fromEnum $ map (\t -> (fst t) < (snd t)) pairs
+findNumIncreasing xs = sum $ map fromEnum $ map (\(x, y) -> x < y) pairs
     where pairs = zip xs (tail xs)
 
+
+slidingWindows xs = map (\(x, y, z) -> x + y + z) triplets
+    where triplets = zip3 xs (tail xs) ((tail . tail) xs)
 
 {-
 main =
@@ -15,4 +18,4 @@ main =
 main = do
     contents <- readFile "input.txt"
     --ls_ints <- convertToIntList contents
-    putStrLn $ show $ findNumIncreasing $ map (read::String -> Int) $ lines contents
+    putStrLn $ show $ (findNumIncreasing . slidingWindows) $ map (read::String -> Int) $ lines contents
