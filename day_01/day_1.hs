@@ -1,7 +1,3 @@
-import System.IO
-import Control.Monad
-
-
 findNumIncreasing xs = sum $ map fromEnum $ map (\(x, y) -> x < y) pairs
     where pairs = zip xs (tail xs)
 
