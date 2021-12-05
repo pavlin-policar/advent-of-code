@@ -11,9 +11,11 @@ expandCoordRange (c0, c1) = let
         (x0, y0) = c0
         (x1, y1) = c1 in
         if x1 /= x0 && y0 == y1 then expandCoordRangeX c0 c1 else
-        if x0 == x1 && y1 /= y0 then expandCoordRangeY c0 c1 else []
+        if x0 == x1 && y1 /= y0 then expandCoordRangeY c0 c1
+        else expandCoordRangeDiag c0 c1
     where expandCoordRangeX (x0, y0) (x1, y1) = [(i, y0) | i <- (generateRange x0 x1)]
           expandCoordRangeY (x0, y0) (x1, y1) = [(x0, j) | j <- (generateRange y0 y1)]
+          expandCoordRangeDiag (x0, y0) (x1, y1) = zip (generateRange x0 x1) (generateRange y0 y1)
 
 
 -- Generate a range working for both 1..5 and 5..1
