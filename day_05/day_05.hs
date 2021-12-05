@@ -44,5 +44,4 @@ main = do
     fContents <- readFile "input.txt"
     let ventCoordRanges = parseCoords fContents
     let ventCoords = concat $ map expandCoordRange ventCoordRanges
-    let ventCounts = M.fromListWith (+) (map (\k -> (k, 1)) ventCoords)
-    putStrLn $ show $ M.size $ M.filter (>1) ventCounts
+    putStrLn $ show $ M.size $ M.filter (>1) $ ventCounts ventCoords
