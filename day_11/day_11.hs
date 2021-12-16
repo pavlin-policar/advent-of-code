@@ -1,4 +1,5 @@
 import Data.Char (digitToInt)
+import Distribution.Simple.Flag (allFlags)
 
 readData fname = do
     contents <- readFile fname
@@ -23,18 +24,23 @@ step (grid, numFlashes) = (resetGrid finalGrid, numFlashes + newFlashes)
         newFlashes = sum $ concatMap (map (fromEnum . (>9))) finalGrid
         resetGrid = map (map (\x -> if x > 9 then 0 else x))
 
-        updateFlashes grid = newGrid
+        updateFlashes grid = finalGrid
             where
                 coords = [(x, y) | x <- [0..length grid - 1], y <- [0..length (head grid) - 1]]
                 flashCoords = filter (\(x, y) -> grid !! x !! y > 9) coords
                 coordsToIncrease = concatMap (adjacentCoords grid) flashCoords
-                newGrid = foldl (
+                finalGrid = foldl (
                         \grid (x, y) ->
                             listReplace grid x (listReplace (grid !! x) y ((grid !! x !! y) + 1))
                     ) newGrid coordsToIncrease
 
 
+allFlashing :: [[Int]] -> Bool
+allFlashing grid = all (==True) (concatMap (map (==0)) grid)
+
+
 main = do
     grid <- readData "input.txt"
-    --print $ step (grid, 0)
-    print $ iterate step (grid, 0) !! 100
+    -- print $ iterate step (grid, 0) !! 100
+    let result = takeWhile (not . allFlashing . fst) (iterate step (grid, 0))
+    print $ length result
