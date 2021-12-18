@@ -1,8 +1,6 @@
 import qualified Data.Text as T
 import qualified Data.Map as M
-import qualified Data.Set as Set
 import qualified Data.Char as Char
-import Data.Map ((!))
 
 
 readGraph fname = do
@@ -21,11 +19,13 @@ edges2adj edges = M.fromListWith (++) (map (\(x, y) -> (x, [y])) edges)
 -- Keep track of number of times we visit nodes
 type StateDict =  M.Map String Int
 
-isAllowed :: StateDict -> String -> Bool
-isAllowed stateDict node
-    | node == "start" || node == "stop" = M.findWithDefault 0 node stateDict < 1
+canVisit :: StateDict -> String -> Bool
+canVisit state node
+    | node == "start" || node == "end" = M.findWithDefault 0 node state < 1
     | Char.isUpper (head node) = True
-    | otherwise = M.findWithDefault 0 node stateDict < 1
+    | otherwise = M.findWithDefault 0 node state < (if any (>1) smallCaveVals then 1 else 2)
+    where
+        smallCaveVals = map snd $ filter (\(k, v) -> Char.isLower (head k)) (M.toList state)
 
 updateStateDict :: String -> StateDict -> StateDict
 updateStateDict node = M.insertWith (+) node 1
@@ -44,10 +44,10 @@ generatePaths graph source target = generatePaths' M.empty [[]] source
         generatePaths' state paths source
             | source == target = addToPaths paths source
             | null children = [[]]
-            | otherwise = concatMap (generatePaths' (updateStateDict source state) newPaths) children
+            | otherwise = concatMap (generatePaths' newState (addToPaths paths source)) children
             where
-                children = filter (isAllowed state) (M.findWithDefault [] source graph)
-                newPaths = addToPaths paths source
+                newState = updateStateDict source state
+                children = filter (canVisit newState) (M.findWithDefault [] source graph)
 
 
 main = do
@@ -55,5 +55,4 @@ main = do
     let undirectedEdges = edges ++ map (\(x, y) -> (y, x)) edges
     let graph = edges2adj undirectedEdges
     let paths = filter (not . null) (generatePaths graph "start" "end")
-    mapM_ print paths
     print $ length paths
