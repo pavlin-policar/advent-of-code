@@ -1,6 +1,4 @@
-
-xs = ["1000","2000","3000","","4000","","5000","6000","","7000","8000","9000","","10000"]
-
+import qualified Data.List as L
 
 parseInput :: [String] -> [[Int]]
 parseInput xs = l_numeric : if length ys_filtered > 0 then parseInput ys_filtered else []
@@ -13,4 +11,4 @@ parseInput xs = l_numeric : if length ys_filtered > 0 then parseInput ys_filtere
 main = do
     contents <- readFile "input.txt"
     let numbers = parseInput (lines contents)
-    putStrLn $ show $ maximum $ map sum numbers
+    putStrLn $ show $ sum $ take 3 $ L.sortBy (flip compare) (map sum numbers)
