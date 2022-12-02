@@ -41,10 +41,30 @@ tuplify2 :: [a] -> (a, a)
 tuplify2 [x, y] = (x, y)
 
 
+pt1 :: [(Move, Move)] -> [Int]
+pt1 hands = map (\(x, y) -> scoreOutcome x + scoreHand y) scores_unpacked
+    where
+        scores_unpacked = zip (map (uncurry evalHand) hands) (map snd hands)
+
+
+-- pt. 2
+mapCharToOutcome :: String -> Outcome
+mapCharToOutcome "X" = Lose
+mapCharToOutcome "Y" = Draw
+mapCharToOutcome "Z" = Win
+
+
+pt2 :: [(String, String)] -> [(Move, Move)]
+pt2 = map (\(x, y) -> let m = mapCharToHand x in (m, determine_move m (mapCharToOutcome y)))
+    where
+        determine_move move Draw = move
+        determine_move move Lose = beats move
+        determine_move move Win = (beats . beats) move
+
+
 main :: IO ()
 main = do
     contents <- readFile "input.txt"
-    let hands = map (tuplify2 . map mapCharToHand . words) (lines contents)
-    let scores_unpacked = zip (map (uncurry evalHand) hands) (map snd hands)
-    let result = map (\(x, y) -> scoreOutcome x + scoreHand y) scores_unpacked
-    putStrLn $ show $ sum result
+    --let result = pt1 $ map (tuplify2 . map mapCharToHand . words) (lines contents)
+    let result = sum $ pt1 $ pt2 $ map (tuplify2 . words) (lines contents)
+    putStrLn $ show result
