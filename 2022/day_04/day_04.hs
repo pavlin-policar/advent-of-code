@@ -1,6 +1,3 @@
-
-
-
 wordsWhen :: (Char -> Bool) -> [Char] -> [[Char]]
 wordsWhen p s = 
     case dropWhile p s of
@@ -22,8 +19,12 @@ tuplify2 :: [b] -> (b, b)
 tuplify2 [x,y] = (x, y)
 
 
-solve :: (Int, Int) -> (Int, Int) -> Bool
-solve (i, j) (k, l) = (i >= k && j <= l) || (k >= i && l <= j)
+solvePt1 :: (Int, Int) -> (Int, Int) -> Bool
+solvePt1 (i, j) (k, l) = (i >= k && j <= l) || (k >= i && l <= j)
+
+
+solvePt2 :: (Int, Int) -> (Int, Int) -> Bool
+solvePt2 (i, j) (k, l) = (j >= k && j <= l) || (i >= k && i <= l) || (i <= k && j >= l) || (k <= i && l >= j)
 
 
 main :: IO ()
@@ -32,4 +33,4 @@ main = do
     let input = lines contents
     let coords = map parseLine input
 
-    putStrLn $ show $ sum $ map (fromEnum . uncurry solve) coords
+    putStrLn $ show $ sum (map (fromEnum . uncurry solvePt2) coords)
