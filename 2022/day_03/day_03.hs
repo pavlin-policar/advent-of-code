@@ -9,8 +9,8 @@ charPriorities =
     in M.union lower_case upper_case
 
 
-solve :: [Char] -> Int
-solve knapsack = S.foldl (+) 0 item_priorities
+pt1 :: String -> Int
+pt1 knapsack = S.foldl (+) 0 item_priorities
     where
         num_items = length knapsack `div` 2
         left = take num_items knapsack
@@ -19,7 +19,25 @@ solve knapsack = S.foldl (+) 0 item_priorities
         item_priorities = S.map (charPriorities M.!) shared_items
 
 
+-- Part 2
+chunkList :: Int -> [a] -> [[a]]
+chunkList n [] = []
+chunkList n xs = take n xs : chunkList n (drop n xs)
+
+
+findCommonItemInGroup :: [[Char]] -> S.Set Char
+findCommonItemInGroup = foldl1 S.intersection . map S.fromList
+
+
+pt2 :: [[Char]] -> Int
+pt2 group = sum $ S.map (charPriorities M.!) shared_items
+    where
+        shared_items = findCommonItemInGroup group
+
+
+main :: IO ()
 main = do
     contents <- readFile "input.txt"
     let input = lines contents
-    putStrLn $ show $ sum $ map solve input
+    --putStrLn $ show $ sum $ map pt1 input
+    putStrLn $ show $ sum $ map pt2 (chunkList 3 input)
