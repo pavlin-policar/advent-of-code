@@ -1,15 +1,20 @@
 import qualified Data.Set as Set
 
 
-solve :: String -> Int
-solve s = solve' 0 s
+solve :: Int -> String -> Int
+solve k s = solve' 0 s
     where
         solve' :: Int -> String -> Int
-        solve' i s = if Set.size (Set.fromList startSeq) == 4 then i + 4 else solve' (i + 1) (tail s)
+        solve' i s = if Set.size (Set.fromList startSeq) == k then i + k else solve' (i + 1) (tail s)
             where
-                startSeq = take 4 s
+                startSeq = take k s
+
+
+pt1 = solve 4
+
+pt2 = solve 14
 
 
 main = do
     input <- readFile "input.txt"
-    print $ solve input
+    print $ pt2 input
